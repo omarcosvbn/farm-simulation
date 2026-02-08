@@ -9,7 +9,7 @@ struct farm_simulation {
         Raylib.initWindow(screenWidth, screenHeight, "Farm Simulation")
         Raylib.setTargetFPS(30)
 
-        let seed: UInt32 = 1
+        let seed: UInt32 = 2
         Raylib.setRandomSeed(seed)
         print("Seed: \(seed)")
 
@@ -22,15 +22,15 @@ struct farm_simulation {
                 x ^= x << 25
                 x ^= x >> 27
                 state = x
-                return x &* 2685821657736338717
+                return x &* 2_685_821_657_736_338_717
             }
         }
 
         var rng = SeededGenerator(seed: UInt64(seed))
 
-        let W = 50 //tiles in width
-        let H = 50 //tiles in height
-        let TILE = 16 //value in pixels
+        let W = 50  //tiles in width
+        let H = 50  //tiles in height
+        let TILE = 16  //value in pixels
 
         let MAX_FOREST = 20
         let MIN_FOREST = 4
@@ -42,6 +42,8 @@ struct farm_simulation {
         var grid = Array(repeating: Array(repeating: 0, count: W), count: H)
 
         let directions: [(dx: Int, dy: Int)] = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+
+        let tiles = Raylib.loadTexture("Resources/images/tiles.png")
 
         func inBounds(_ x: Int, _ y: Int) -> Bool {
             x >= 0 && x < W && y >= 0 && y < H
@@ -106,10 +108,10 @@ struct farm_simulation {
 
             while !stack.isEmpty && count < MAX_FOREST {
                 let (x, y) = stack.remove(at: Int.random(in: 0..<stack.count, using: &rng))
-                    for d in directions.shuffled(using: &rng) {
+                for d in directions.shuffled(using: &rng) {
                     let nx = x + d.dx
                     let ny = y + d.dy
-                        if inBounds(nx, ny), grid[ny][nx] == 0, !adjacentToRiver(nx, ny) {
+                    if inBounds(nx, ny), grid[ny][nx] == 0, !adjacentToRiver(nx, ny) {
                         grid[ny][nx] = 1
                         stack.append((nx, ny))
                         count += 1
@@ -145,11 +147,46 @@ struct farm_simulation {
             Raylib.clearBackground(.rayWhite)
             for y in 0..<H {
                 for x in 0..<W {
-                    var color: Color = .darkGray
-                    if grid[y][x] == 2 { color = .red }
-                    if grid[y][x] == 1 { color = .blue }
-                    Raylib.drawRectangle(
-                        Int32(x * TILE), Int32(y * TILE), Int32(TILE - 1), Int32(TILE - 1), color)
+                    if grid[y][x] == 2 {
+                        Raylib.drawTextureRec(
+                            tiles,
+                            Rectangle(
+                                x: 0,
+                                y: 0,
+                                width: Float(TILE),
+                                height: Float(TILE)
+                            ),
+                            Vector2(x: Float(x) * Float(TILE), y: Float(y) * Float(TILE)),
+                            .white
+                        )
+                    }
+                    if grid[y][x] == 1 {
+                        Raylib.drawTextureRec(
+                            tiles,
+                            Rectangle(
+                                x: Float(TILE) * 2,
+                                y: 0,
+                                width: Float(TILE),
+                                height: Float(TILE)
+                            ),
+                            Vector2(x: Float(x) * Float(TILE), y: Float(y) * Float(TILE)),
+                            .white
+                        )
+                    }
+                    if grid[y][x] == 0 {
+                        Raylib.drawTextureRec(
+                            tiles,
+                            Rectangle(
+                                x: Float(TILE) * 1,
+                                y: 0,
+                                width: Float(TILE),
+                                height: Float(TILE)
+                            ),
+                            Vector2(x: Float(x) * Float(TILE), y: Float(y) * Float(TILE)),
+                            .white
+                        )
+                    }
+
                 }
             }
             Raylib.endDrawing()
