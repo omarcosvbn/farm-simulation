@@ -17,7 +17,7 @@ public class MapGeneration : MonoBehaviour{
         for (int i = 0; i < mapSize; i++){
             for (int j = 0; j < mapSize; j++){
                 Vector2 position = new Vector2(i,j);
-                Spawn(position, grass);
+                if(map[i,j] == 0) Spawn(position, grass);
             }
         }
     }
@@ -28,8 +28,8 @@ public class MapGeneration : MonoBehaviour{
 
     void Spawn(Vector2 position, Sprite sprite){
         GameObject obj = new GameObject("Tile");
-        obj.transform.position = position;
         obj.transform.SetParent(tileContainer);
+        obj.transform.localPosition = position;
         SpriteRenderer sr = obj.AddComponent<SpriteRenderer>();
         sr.sprite = sprite;
     }
