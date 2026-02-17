@@ -1,4 +1,4 @@
-
+using System.Collections.Generic;
 using UnityEngine;
 
 public class MapGeneration : MonoBehaviour{
@@ -21,7 +21,7 @@ public class MapGeneration : MonoBehaviour{
     }
 
     void Start(){
-        Forest(10, new Vector2(15, 15));
+        Forest(15, new Vector2Int(15, 15));
 
         
         for (int i = 0; i < mapSize; i++){
@@ -33,7 +33,9 @@ public class MapGeneration : MonoBehaviour{
         }
     }
 
-    void Update(){
+    void Update()
+    {
+        Debug.Log(Vector2Int.up);
     }
 
     void Spawn(Vector2 position, Sprite sprite){
@@ -44,37 +46,36 @@ public class MapGeneration : MonoBehaviour{
         sr.sprite = sprite;
     }
 
-    void Forest(int maxTrees, Vector2 startPoint){
-        int count = 0;
-        Vector2 lastPoint = startPoint;
-        map[(int)lastPoint.x, (int)lastPoint.y] = 2;
+    void Forest(int maxTrees, Vector2Int startPoint){
+        List<Vector2Int> forestTiles = new List<Vector2Int>();
 
-        while (count < maxTrees - 1){
-            // check if the first index of map is equal
-            if(Random.Range(0, 2) == 0){
-                // check if the second index of map -1 or +1
-                if(Random.Range(0, 2) == 0){
-                    map[(int)lastPoint.x, (int)lastPoint.y - 1] = 2;
-                    lastPoint = new Vector2(lastPoint.x, lastPoint.y - 1);
-                }
-                else{
-                    map[(int)lastPoint.x, (int)lastPoint.y + 1] = 2;
-                    lastPoint = new Vector2(lastPoint.x, lastPoint.y + 1);
-                }
-            }
-            else{
-                if(Random.Range(0, 2) == 0){
-                    map[(int)lastPoint.x - 1, (int)lastPoint.y] = 2;
-                    lastPoint = new Vector2(lastPoint.x - 1, lastPoint.y);
-                }
-                else{
-                    map[(int)lastPoint.x + 1, (int)lastPoint.y] = 2;
-                    lastPoint = new Vector2(lastPoint.x + 1, lastPoint.y);
-                }
+        map[startPoint.x, startPoint.y] = 2;
+        forestTiles.Add(startPoint);
+
+        int count = 1;
+
+        while (count < maxTrees){
+            Vector2Int baseTile = forestTiles[Random.Range(0, forestTiles.Count)];
+
+            Vector2Int direction = Vector2Int.zero;
+            int dir = Random.Range(0, 4);
+
+            switch (dir){
+                case 0: direction = Vector2Int.up; break;
+                case 1: direction = Vector2Int.down; break;
+                case 2: direction = Vector2Int.left; break;
+                case 3: direction = Vector2Int.right; break;
             }
 
-            count++;
+            Vector2Int newTile = baseTile + direction;
+
+            if (newTile.x >= 0 && newTile.x < mapSize && newTile.y >= 0 && newTile.y < mapSize){
+                if (map[newTile.x, newTile.y] != 2){
+                    map[newTile.x, newTile.y] = 2;
+                    forestTiles.Add(newTile);
+                    count++;
+                }
+            }
         }
     }
-
 }
