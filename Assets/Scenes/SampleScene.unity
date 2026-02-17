@@ -427,6 +427,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MapGeneration
   grass: {fileID: -250234909, guid: 2bc6bf24fe3410f83af7c46af097795c, type: 3}
   river: {fileID: 1807125615787039003, guid: 2bc6bf24fe3410f83af7c46af097795c, type: 3}
+  tree: {fileID: 570539520, guid: 2bc6bf24fe3410f83af7c46af097795c, type: 3}
   tileContainer: {fileID: 463512932}
 --- !u!4 &1857215736
 Transform:
